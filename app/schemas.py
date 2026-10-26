@@ -258,8 +258,10 @@ class PredictionIn(BaseModel):
     model_version: str = Field(max_length=40)
     score: float = Field(ge=0, le=1, description="Probabilidad de la clase Riesgo alto")
     threshold: float = Field(default=0.35, ge=0, le=1)
-    risk_level: Literal["bajo", "moderado"] | None = Field(
-        default=None, description="Nivel sugerido por el modelo cuando score < threshold")
+    risk_level: RiskLevel | None = Field(
+        default=None,
+        description="Nivel sugerido por el modelo. El servidor decide: score >= threshold -> alto; "
+                    "si no, usa 'bajo' o 'moderado' sugerido (un 'alto' sugerido con score bajo se trata como moderado)")
 
     @field_validator("week_start")
     @classmethod

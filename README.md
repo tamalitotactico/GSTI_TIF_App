@@ -27,7 +27,7 @@ pip install -r requirements-dev.txt
 TEST_ADMIN_DSN=postgresql://gsti_owner:<pwd>@localhost:5432/postgres pytest
 ```
 
-Cubren puntuación de instrumentos, reglas de alerta, permisos por rol, idempotencia, rechazo de datos inválidos, cifrado de identidad, EMA y adherencia, WebSockets, retiro del participante y las vistas analíticas.
+Son 42 pruebas. Cubren puntuación de instrumentos, reglas de alerta, permisos por rol, idempotencia, rechazo de datos inválidos, cifrado de identidad, EMA y adherencia, WebSockets, retiro del participante, las vistas analíticas y el módulo de ML (entrenamiento e inferencia contra la API).
 
 ## Diseño de privacidad
 
@@ -55,7 +55,7 @@ Cada alerta pasa por `abierta → reconocida → derivada/cerrada` con nota y re
 
 ## Integración con el modelo predictivo (RF / XGBoost)
 
-El entrenamiento e inferencia corren en un microservicio Python aparte, con una cuenta de rol `service`:
+El entrenamiento e inferencia corren en un microservicio Python aparte (`scripts/entrenamiento_riesgo.py`, `scripts/ml_service_client.py`), con una cuenta de rol `service`. Guía completa y advertencias metodológicas: [docs/integracion-ml.md](docs/integracion-ml.md).
 
 1. `GET /api/v1/features/person-week` → vector de 8 indicadores por persona-semana (pasos diarios, minutos de sueño, minutos en casa, minutos con uso de apps, PHQ-9, GAD-7, ULS-6, nivel C-SSRS) y la etiqueta `label_high_risk` (C-SSRS ≥ 3 o PHQ-9 ítem 9 > 0). Los faltantes llegan como `null`: la imputación se hace dentro del pipeline del modelo.
 2. `POST /api/v1/predictions` → probabilidad de Riesgo alto por persona-semana; el servidor asigna el nivel (bajo/moderado/alto) y aplica el gatillo clínico.

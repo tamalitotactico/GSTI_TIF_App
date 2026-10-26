@@ -89,6 +89,8 @@ def risk_from_prediction(score: float, threshold: float, suggested: str | None) 
     """Nivel de riesgo a partir de la probabilidad del clasificador (umbral 0.35 por defecto)."""
     if score >= threshold:
         return "alto"
+    if suggested == "alto":  # el modelo lo sugirió pero la probabilidad no alcanza el umbral
+        return "moderado"
     return suggested if suggested in ("bajo", "moderado") else "bajo"
 
 

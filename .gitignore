@@ -8,3 +8,7 @@ venv/
 .DS_Store
 .idea/
 .vscode/
+# Artefactos del módulo de ML (se regeneran)
+scripts/datos_estudiantes.csv
+scripts/models_saved/
+*.joblib

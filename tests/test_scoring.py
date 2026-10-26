@@ -48,6 +48,8 @@ def test_prediction_risk_levels():
     assert risk_from_prediction(0.35, 0.35, None) == "alto"
     assert risk_from_prediction(0.34, 0.35, "moderado") == "moderado"
     assert risk_from_prediction(0.10, 0.35, None) == "bajo"
+    assert risk_from_prediction(0.30, 0.35, "alto") == "moderado"
+    assert risk_from_prediction(0.90, 0.35, "alto") == "alto"
 
 
 def test_phq9_no_alert_when_item9_zero():
