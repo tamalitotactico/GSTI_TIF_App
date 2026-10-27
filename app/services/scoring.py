@@ -1,7 +1,7 @@
 """Validación y puntuación de instrumentos psicométricos y EMA."""
 from dataclasses import dataclass, field
 
-from app.catalog import BHS_FALSE_KEYED, InstrumentDef
+from app.catalog import BHS_FALSE_KEYED, SEVERITY_BANDS, InstrumentDef
 
 
 class ScoringError(ValueError):
@@ -43,7 +43,8 @@ def validate_and_score(ins: InstrumentDef, raw: dict[int, int]) -> ScoreResult:
         if not it.min_value <= v <= it.max_value:
             raise ScoringError(f"{ins.code} ítem {no}: valor {v} fuera de rango [{it.min_value}, {it.max_value}]")
 
-    missing = sorted(set(items) - set(raw) - _skippable(ins, raw))
+    optional = {no for no, it in items.items() if not it.scored}  # p. ej., ítems de impacto funcional
+    missing = sorted(set(items) - set(raw) - _skippable(ins, raw) - optional)
     if missing:
         raise ScoringError(f"Faltan ítems obligatorios en {ins.code}: {missing}")
 
@@ -59,6 +60,10 @@ def validate_and_score(ins: InstrumentDef, raw: dict[int, int]) -> ScoreResult:
     match ins.scoring:
         case "sum":
             total = float(sum(scored))
+            band = next((c for lo, hi, c in SEVERITY_BANDS.get(ins.code, []) if lo <= total <= hi), None)
+            if band:
+                sub["severity"] = band
+            sub.update({it.code: raw[no] for no, it in items.items() if not it.scored and no in raw})
         case "mean":
             total = round(sum(scored) / len(scored), 3)
         case "bhs":

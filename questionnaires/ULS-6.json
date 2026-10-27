@@ -1,0 +1,94 @@
+{
+  "id": "ULS-6",
+  "name": "Escala de Soledad de UCLA - Versión Breve de 6 Ítems (ULS-6)",
+  "domain": "Soledad Subjetiva / Aislamiento Social",
+  "version": "2.0",
+  "has_branching_logic": false,
+  "branching_summary": "Formulario lineal continuo. Los 6 ítems son obligatorios para todos sin saltos de pregunta.",
+  "time_frame": "General / Reciente",
+  "scale": {
+    "type": "likert_direct",
+    "min": 1,
+    "max": 4,
+    "options": [
+      {
+        "value": 1,
+        "label": "Nunca"
+      },
+      {
+        "value": 2,
+        "label": "Rara vez"
+      },
+      {
+        "value": 3,
+        "label": "A veces"
+      },
+      {
+        "value": 4,
+        "label": "Con frecuencia / A menudo"
+      }
+    ]
+  },
+  "items": [
+    {
+      "id": 1,
+      "code": "uls6_q1",
+      "backend_item": 1,
+      "text": "¿Con qué frecuencia sientes que te falta compañía?",
+      "source_item_en": "I lack companionship",
+      "is_conditional": false
+    },
+    {
+      "id": 2,
+      "code": "uls6_q2",
+      "backend_item": 2,
+      "text": "¿Con qué frecuencia sientes que no hay nadie a quien puedas recurrir?",
+      "source_item_en": "There is no one I can turn to",
+      "is_conditional": false
+    },
+    {
+      "id": 3,
+      "code": "uls6_q3",
+      "backend_item": 3,
+      "text": "¿Con qué frecuencia te sientes excluido(a) o dejado(a) de lado por los demás?",
+      "source_item_en": "I feel left out",
+      "is_conditional": false
+    },
+    {
+      "id": 4,
+      "code": "uls6_q4",
+      "backend_item": 4,
+      "text": "¿Con qué frecuencia te sientes aislado(a) de los demás?",
+      "source_item_en": "I feel isolated from others",
+      "is_conditional": false
+    },
+    {
+      "id": 5,
+      "code": "uls6_q5",
+      "backend_item": 5,
+      "text": "¿Con qué frecuencia te sientes infeliz por estar tan retraído(a)?",
+      "source_item_en": "I am unhappy being so withdrawn",
+      "is_conditional": false
+    },
+    {
+      "id": 6,
+      "code": "uls6_q6",
+      "backend_item": 6,
+      "text": "¿Con qué frecuencia sientes que hay gente a tu alrededor, pero que no está realmente contigo?",
+      "source_item_en": "People are around me but not with me",
+      "is_conditional": false
+    }
+  ],
+  "scoring": {
+    "min_score": 6,
+    "max_score": 24,
+    "method": "suma directa (sin ítems invertidos)",
+    "note": "La ULS-6 no tiene puntos de corte validados: se usa como variable continua (6-24) en el modelo. No genera alertas por sí sola."
+  },
+  "backend": {
+    "instrument": "ULS6",
+    "format": "POST /api/v1/questionnaires/responses -> answers: [{item: <backend_item>, value: <entero>}]",
+    "booleans": "SÍ = 1, NO = 0"
+  },
+  "translation_note": "Traducción de trabajo al español; validar con una versión en español publicada o un proceso de traducción-retrotraducción antes del piloto."
+}

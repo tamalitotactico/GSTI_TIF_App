@@ -1,0 +1,191 @@
+{
+  "id": "PHQ-9",
+  "name": "Cuestionario sobre la Salud del Paciente (PHQ-9)",
+  "domain": "Depresión",
+  "version": "2.0",
+  "has_branching_logic": true,
+  "branching_summary": "Los ítems 1 al 9 son obligatorios. La pregunta de impacto funcional se activa dinámicamente si la suma de ítems 1-9 es mayor a 0.",
+  "time_frame": "Durante las últimas 2 semanas",
+  "scale": {
+    "type": "likert",
+    "min": 0,
+    "max": 3,
+    "options": [
+      {
+        "value": 0,
+        "label": "Ningún día"
+      },
+      {
+        "value": 1,
+        "label": "Varios días"
+      },
+      {
+        "value": 2,
+        "label": "Más de la mitad de los días"
+      },
+      {
+        "value": 3,
+        "label": "Casi todos los días"
+      }
+    ]
+  },
+  "items": [
+    {
+      "id": 1,
+      "code": "phq9_q1",
+      "text": "Poco interés o placer en hacer cosas",
+      "is_conditional": false,
+      "backend_item": 1
+    },
+    {
+      "id": 2,
+      "code": "phq9_q2",
+      "text": "Se ha sentido decaído(a), deprimido(a) o sin esperanzas",
+      "is_conditional": false,
+      "backend_item": 2
+    },
+    {
+      "id": 3,
+      "code": "phq9_q3",
+      "text": "Ha tenido dificultad para quedarse o permanecer dormido(a), o ha dormido demasiado",
+      "is_conditional": false,
+      "backend_item": 3
+    },
+    {
+      "id": 4,
+      "code": "phq9_q4",
+      "text": "Se ha sentido cansado(a) o con poca energía",
+      "is_conditional": false,
+      "backend_item": 4
+    },
+    {
+      "id": 5,
+      "code": "phq9_q5",
+      "text": "Sin apetito o ha comido en exceso",
+      "is_conditional": false,
+      "backend_item": 5
+    },
+    {
+      "id": 6,
+      "code": "phq9_q6",
+      "text": "Se ha sentido mal con usted mismo(a) – o que es un fracaso o que ha quedado mal con usted mismo(a) o con su familia",
+      "is_conditional": false,
+      "backend_item": 6
+    },
+    {
+      "id": 7,
+      "code": "phq9_q7",
+      "text": "Ha tenido dificultad para concentrarse en ciertas actividades, tales como leer el periódico o ver la televisión",
+      "is_conditional": false,
+      "backend_item": 7
+    },
+    {
+      "id": 8,
+      "code": "phq9_q8",
+      "text": "¿Se ha movido o hablado tan lento que otras personas podrían haberlo notado? o lo contrario – muy inquieto(a) o agitado(a) que ha estado moviéndose mucho más de lo normal",
+      "is_conditional": false,
+      "backend_item": 8
+    },
+    {
+      "id": 9,
+      "code": "phq9_q9",
+      "text": "Pensamientos de que estaría mejor muerto(a) o de lastimarse de alguna manera",
+      "is_conditional": false,
+      "is_clinical_bypass_trigger": true,
+      "backend_item": 9
+    }
+  ],
+  "functional_impact_item": {
+    "id": "phq9_functional",
+    "code": "phq9_impact",
+    "text": "Si marcó cualquiera de los problemas, ¿qué tanta dificultad le han dado estos problemas para hacer su trabajo, encargarse de las tareas del hogar, o llevarse bien con otras personas?",
+    "is_conditional": true,
+    "activation_rule": "sum(phq9_q1..phq9_q9) > 0 or any(phq9_q1..phq9_q9 >= 1)",
+    "options": [
+      {
+        "value": 0,
+        "label": "No ha sido difícil"
+      },
+      {
+        "value": 1,
+        "label": "Un poco difícil"
+      },
+      {
+        "value": 2,
+        "label": "Muy difícil"
+      },
+      {
+        "value": 3,
+        "label": "Extremadamente difícil"
+      }
+    ],
+    "backend_item": 10,
+    "note": "Opcional; no suma al puntaje. Mostrar solo si algún ítem 1-9 >= 1."
+  },
+  "scoring": {
+    "min_score": 0,
+    "max_score": 27,
+    "severity_bands": [
+      {
+        "range": [
+          0,
+          4
+        ],
+        "severity": "Ninguna / Mínima",
+        "code": "none_minimal",
+        "action": "Ninguna"
+      },
+      {
+        "range": [
+          5,
+          9
+        ],
+        "severity": "Leve",
+        "code": "mild",
+        "action": "Espera vigilante; repetir PHQ-9 en seguimiento"
+      },
+      {
+        "range": [
+          10,
+          14
+        ],
+        "severity": "Moderada",
+        "code": "moderate",
+        "action": "Plan de tratamiento (asesoramiento, seguimiento y/o farmacoterapia)"
+      },
+      {
+        "range": [
+          15,
+          19
+        ],
+        "severity": "Moderadamente Grave",
+        "code": "moderately_severe",
+        "action": "Tratamiento activo con farmacoterapia y/o psicoterapia"
+      },
+      {
+        "range": [
+          20,
+          27
+        ],
+        "severity": "Grave",
+        "code": "severe",
+        "action": "Iniciación inmediata de tratamiento y derivación rápida a especialista"
+      }
+    ],
+    "clinical_bypass_rules": [
+      {
+        "rule_id": "bypass_phq9_q9",
+        "condition": "phq9_q9 > 0",
+        "risk_level": "alto",
+        "backend_rule_code": "phq9_item9",
+        "action": "El servidor crea la alerta al recibir la respuesta y la app muestra recursos de ayuda (support_resources=true). Revisión profesional inmediata."
+      }
+    ],
+    "severity_source": "El servidor devuelve la banda en subscores.severity (solo descriptiva)."
+  },
+  "backend": {
+    "instrument": "PHQ9",
+    "format": "POST /api/v1/questionnaires/responses -> answers: [{item: <backend_item>, value: <entero>}]",
+    "booleans": "SÍ = 1, NO = 0"
+  }
+}

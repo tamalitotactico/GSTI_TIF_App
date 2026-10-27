@@ -1,0 +1,214 @@
+{
+  "id": "C-SSRS",
+  "name": "Columbia-Escala de Severidad Suicida (C-SSRS) - Versión Pesquisa",
+  "domain": "Ideación y Conducta Suicida",
+  "version": "2.0",
+  "has_branching_logic": true,
+  "branching_summary": "P1 y P2 son obligatorias. Si P2 es SÍ, se formulan P3, P4 y P5; si es NO, se omiten y se pasa a P6. P6 (alguna vez en la vida) es obligatoria; si es SÍ, se pregunta si fue en los últimos 3 meses (ítem 7 en el backend). Los ítems omitidos no se envían.",
+  "time_frames": [
+    "Último mes",
+    "Alguna vez en la vida",
+    "Últimos 3 meses"
+  ],
+  "items": [
+    {
+      "id": 1,
+      "code": "cssrs_q1",
+      "time_frame": "Último mes",
+      "text": "¿Has deseado estar muerto(a) o poder dormirte y no despertar?",
+      "description": "Confirma ideas de deseo de estar muerto(a) o de no seguir viviendo, o el deseo de quedarse dormido(a) y no despertar.",
+      "type": "boolean",
+      "is_conditional": false,
+      "options": [
+        {
+          "value": true,
+          "label": "SÍ"
+        },
+        {
+          "value": false,
+          "label": "NO"
+        }
+      ],
+      "backend_item": 1
+    },
+    {
+      "id": 2,
+      "code": "cssrs_q2",
+      "time_frame": "Último mes",
+      "text": "¿Has tenido realmente la idea de suicidarte?",
+      "description": "Pensamientos generales y no específicos relativos al deseo de poner fin a su vida, sin ideas sobre cómo quitarse la vida (métodos, intención o plan).",
+      "type": "boolean",
+      "is_conditional": false,
+      "options": [
+        {
+          "value": true,
+          "label": "SÍ"
+        },
+        {
+          "value": false,
+          "label": "NO"
+        }
+      ],
+      "branching_rule": {
+        "on_true": "continue_to_q3",
+        "on_false": "skip_to_q6",
+        "affected_items": [
+          "cssrs_q3",
+          "cssrs_q4",
+          "cssrs_q5"
+        ]
+      },
+      "backend_item": 2
+    },
+    {
+      "id": 3,
+      "code": "cssrs_q3",
+      "time_frame": "Último mes",
+      "text": "¿Has pensado en cómo llevarías esto a cabo?",
+      "description": "Pensado en al menos un método, pero sin un plan específico con detalles elaborados de hora, lugar o método.",
+      "type": "boolean",
+      "is_conditional": true,
+      "depends_on": {
+        "item_code": "cssrs_q2",
+        "expected_value": true
+      },
+      "options": [
+        {
+          "value": true,
+          "label": "SÍ"
+        },
+        {
+          "value": false,
+          "label": "NO"
+        }
+      ],
+      "backend_item": 3
+    },
+    {
+      "id": 4,
+      "code": "cssrs_q4",
+      "time_frame": "Último mes",
+      "text": "¿Has tenido estas ideas y en cierto grado la intención de llevarlas a cabo?",
+      "description": "Ideas suicidas activas de quitarse la vida con cierta intención de llevar a cabo tales ideas.",
+      "type": "boolean",
+      "is_conditional": true,
+      "depends_on": {
+        "item_code": "cssrs_q2",
+        "expected_value": true
+      },
+      "options": [
+        {
+          "value": true,
+          "label": "SÍ"
+        },
+        {
+          "value": false,
+          "label": "NO"
+        }
+      ],
+      "backend_item": 4
+    },
+    {
+      "id": 5,
+      "code": "cssrs_q5",
+      "time_frame": "Último mes",
+      "text": "¿Has comenzado a elaborar o has elaborado los detalles sobre cómo suicidarte? ¿Tienes intenciones de llevar a cabo este plan?",
+      "description": "Ideas de quitarse la vida con detalles del plan parcial o totalmente elaborados, e intención de llevar a cabo este plan.",
+      "type": "boolean",
+      "is_conditional": true,
+      "depends_on": {
+        "item_code": "cssrs_q2",
+        "expected_value": true
+      },
+      "options": [
+        {
+          "value": true,
+          "label": "SÍ"
+        },
+        {
+          "value": false,
+          "label": "NO"
+        }
+      ],
+      "backend_item": 5
+    },
+    {
+      "id": 6,
+      "code": "cssrs_q6",
+      "time_frame": "Alguna vez en la vida",
+      "text": "¿Alguna vez has hecho algo, comenzado a hacer algo o te has preparado para hacer algo para terminar con tu vida?",
+      "description": "Conducta suicida: juntar medicamentos, obtener un arma, escribir carta de suicidio, ensayo o intento real.",
+      "type": "boolean",
+      "is_conditional": false,
+      "options": [
+        {
+          "value": true,
+          "label": "SÍ"
+        },
+        {
+          "value": false,
+          "label": "NO"
+        }
+      ],
+      "sub_items": [
+        {
+          "code": "cssrs_q6_3months",
+          "backend_item": 7,
+          "text": "¿Fue dentro de los últimos 3 meses?",
+          "type": "boolean",
+          "is_conditional": true,
+          "depends_on": {
+            "item_code": "cssrs_q6",
+            "expected_value": true
+          }
+        }
+      ],
+      "backend_item": 6
+    }
+  ],
+  "scoring": {
+    "clinical_bypass_rules": [
+      {
+        "rule_id": "bypass_cssrs_high_risk",
+        "condition": "nivel de ideación >= 3 (P3, P4 o P5 = SÍ) o conducta en los últimos 3 meses",
+        "risk_level": "alto",
+        "backend_rule_code": "cssrs_positive",
+        "action": "El servidor crea la alerta al recibir la respuesta; la app muestra recursos de ayuda. Revisión profesional inmediata."
+      }
+    ],
+    "triage_actions": [
+      {
+        "trigger": "Sí al ítem 1 o 2",
+        "action": "Derivar a atención de salud mental para evaluación y formulación de riesgos."
+      },
+      {
+        "trigger": "Sí al ítem 3 e ítem 6 (más allá de 3 meses)",
+        "action": "Visita domiciliaria u hora presencial lo antes posible. Derivación a APS."
+      },
+      {
+        "trigger": "Sí al ítem 4, 5 o 6 (dentro de los últimos 3 meses)",
+        "action": "Visita domiciliaria u hora presencial dentro de las 24 horas. Derivación urgente a APS o urgencias."
+      }
+    ],
+    "ideation_level": "Nivel = número del ítem de ideación más alto respondido SÍ (1 a 5). El servidor lo calcula.",
+    "backend_severity": {
+      "alto": "nivel >= 3 o conducta en 3 meses",
+      "moderado": "nivel 2 o conducta alguna vez",
+      "bajo": "nivel 1"
+    }
+  },
+  "backend": {
+    "instrument": "CSSRS_SCREEN",
+    "format": "POST /api/v1/questionnaires/responses -> answers: [{item: <backend_item>, value: <entero>}]",
+    "booleans": "SÍ = 1, NO = 0",
+    "item_map": {
+      "cssrs_q1": 1,
+      "cssrs_q2": 2,
+      "cssrs_q3": 3,
+      "cssrs_q4": 4,
+      "cssrs_q5": 5,
+      "cssrs_q6": 6,
+      "cssrs_q6_3months": 7
+    }
+  }
+}

@@ -9,6 +9,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app ./app
 COPY migrations ./migrations
 COPY scripts ./scripts
+COPY questionnaires ./questionnaires
 COPY alembic.ini .
 
 RUN useradd --create-home --uid 10001 gsti

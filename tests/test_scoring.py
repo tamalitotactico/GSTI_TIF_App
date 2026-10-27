@@ -69,7 +69,7 @@ def test_out_of_range_and_unknown_items_rejected():
     with pytest.raises(ScoringError, match="fuera de rango"):
         validate_and_score(I["GAD7"], {**full("GAD7", 0), 3: 4})
     with pytest.raises(ScoringError, match="inexistentes"):
-        validate_and_score(I["GAD7"], {**full("GAD7", 0), 8: 1})
+        validate_and_score(I["GAD7"], {**full("GAD7", 0), 9: 1})
 
 
 def test_bhs_key():

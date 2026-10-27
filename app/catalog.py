@@ -82,7 +82,8 @@ INSTRUMENTS: list[InstrumentDef] = [
     InstrumentDef("NSSI", "Autolesión no suicida (ítem único)", "1", "sum", "safety", "weekly",
                   [ItemDef(1, "nssi_recent", 0, 1, is_safety_item=True)]),
     InstrumentDef("PHQ9", "Patient Health Questionnaire-9", "1", "sum", "predictor", "baseline",
-                  _likert("phq9", 9, 0, 3, safety={9})),
+                  _likert("phq9", 9, 0, 3, safety={9})
+                  + [ItemDef(10, "phq9_impact", 0, 3, scored=False)]),  # impacto funcional (opcional, no suma)
     # Instrumentos complementarios (opcionales; no forman parte del modelo del artículo)
     InstrumentDef(
         "BSS", "Beck Scale for Suicide Ideation", "1", "bss", "safety", "weekly",
@@ -106,7 +107,8 @@ INSTRUMENTS: list[InstrumentDef] = [
                   [ItemDef(1, "violence", 0, 1), ItemDef(2, "abuse", 0, 1),
                    ItemDef(3, "discrimination", 0, 1), ItemDef(4, "bullying", 0, 1)]),
     InstrumentDef("GAD7", "Generalized Anxiety Disorder-7", "1", "sum", "predictor", "biweekly",
-                  _likert("gad7", 7, 0, 3)),
+                  _likert("gad7", 7, 0, 3)
+                  + [ItemDef(8, "gad7_impact", 0, 3, scored=False)]),  # impacto funcional (opcional, no suma)
     # EMA diaria por chatbot: sin ítems de ideación (decisión metodológica del artículo)
     InstrumentDef("EMA_DAILY", "EMA diaria (afecto, estrés, soledad, sueño percibido)", "1", "none", "ema", "ema",
                   [ItemDef(1, "affect", 0, 10), ItemDef(2, "stress", 0, 10),
@@ -120,3 +122,10 @@ METRICS_BY_CODE = {m.code: m for m in METRICS}
 
 # Clave de la BHS: ítems que suman 1 punto cuando se responde "Falso".
 BHS_FALSE_KEYED = {1, 3, 5, 6, 8, 10, 13, 15, 19}
+
+# Bandas de severidad estándar (Kroenke et al., 2001; Spitzer et al., 2006). Solo descriptivas:
+# las alertas las deciden las reglas de app/services/safety.py, no estas bandas.
+SEVERITY_BANDS = {
+    "PHQ9": [(0, 4, "minimal"), (5, 9, "mild"), (10, 14, "moderate"), (15, 19, "moderately_severe"), (20, 27, "severe")],
+    "GAD7": [(0, 4, "minimal"), (5, 9, "mild"), (10, 14, "moderate"), (15, 21, "severe")],
+}

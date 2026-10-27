@@ -1,0 +1,158 @@
+{
+  "id": "GAD-7",
+  "name": "Cuestionario de Trastorno de Ansiedad Generalizada (GAD-7)",
+  "domain": "Ansiedad",
+  "version": "2.0",
+  "has_branching_logic": true,
+  "branching_summary": "Los ítems 1 al 7 son obligatorios. La pregunta de impacto funcional se activa dinámicamente si la suma de ítems 1-7 es mayor a 0.",
+  "time_frame": "Durante las últimas 2 semanas",
+  "scale": {
+    "type": "likert",
+    "min": 0,
+    "max": 3,
+    "options": [
+      {
+        "value": 0,
+        "label": "Ningún día"
+      },
+      {
+        "value": 1,
+        "label": "Varios días"
+      },
+      {
+        "value": 2,
+        "label": "Más de la mitad de los días"
+      },
+      {
+        "value": 3,
+        "label": "Casi todos los días"
+      }
+    ]
+  },
+  "items": [
+    {
+      "id": 1,
+      "code": "gad7_q1",
+      "text": "Sentirse nervioso, ansioso o agitado",
+      "is_conditional": false,
+      "backend_item": 1
+    },
+    {
+      "id": 2,
+      "code": "gad7_q2",
+      "text": "No poder detenerse o controlar la preocupación",
+      "is_conditional": false,
+      "backend_item": 2
+    },
+    {
+      "id": 3,
+      "code": "gad7_q3",
+      "text": "Preocuparse demasiado por cosas diferentes",
+      "is_conditional": false,
+      "backend_item": 3
+    },
+    {
+      "id": 4,
+      "code": "gad7_q4",
+      "text": "Dificultad para relajarse",
+      "is_conditional": false,
+      "backend_item": 4
+    },
+    {
+      "id": 5,
+      "code": "gad7_q5",
+      "text": "Ser tan inquieto que es difícil quedarse quieto",
+      "is_conditional": false,
+      "backend_item": 5
+    },
+    {
+      "id": 6,
+      "code": "gad7_q6",
+      "text": "Molestarse o irritarse con facilidad",
+      "is_conditional": false,
+      "backend_item": 6
+    },
+    {
+      "id": 7,
+      "code": "gad7_q7",
+      "text": "Sentir miedo, como si algo horrible pudiera suceder",
+      "is_conditional": false,
+      "backend_item": 7
+    }
+  ],
+  "functional_impact_item": {
+    "id": "gad7_functional",
+    "code": "gad7_impact",
+    "text": "Si marcó cualquier problema, ¿qué tan difícil le han hecho estos problemas para hacer su trabajo, ocuparse de las cosas en el hogar o llevarse bien con otras personas?",
+    "is_conditional": true,
+    "activation_rule": "sum(gad7_q1..gad7_q7) > 0 or any(gad7_q1..gad7_q7 >= 1)",
+    "options": [
+      {
+        "value": 0,
+        "label": "No es nada difícil"
+      },
+      {
+        "value": 1,
+        "label": "Algo difícil"
+      },
+      {
+        "value": 2,
+        "label": "Muy difícil"
+      },
+      {
+        "value": 3,
+        "label": "Extremadamente difícil"
+      }
+    ],
+    "backend_item": 8,
+    "note": "Opcional; no suma al puntaje. Mostrar solo si algún ítem 1-7 >= 1."
+  },
+  "scoring": {
+    "min_score": 0,
+    "max_score": 21,
+    "severity_bands": [
+      {
+        "range": [
+          0,
+          4
+        ],
+        "severity": "Mínima",
+        "code": "minimal",
+        "action": "Tratamiento no indicado clínicamente"
+      },
+      {
+        "range": [
+          5,
+          9
+        ],
+        "severity": "Leve",
+        "code": "mild",
+        "action": "Juicio clínico según conocimiento del paciente y duración de síntomas"
+      },
+      {
+        "range": [
+          10,
+          14
+        ],
+        "severity": "Moderada",
+        "code": "moderate",
+        "action": "Objetivos e intervenciones enfocados en síntomas específicos (cribado positivo probable)"
+      },
+      {
+        "range": [
+          15,
+          21
+        ],
+        "severity": "Grave",
+        "code": "severe",
+        "action": "Intervenciones específicas; suele requerir medicación, terapia o ambas"
+      }
+    ],
+    "severity_source": "El servidor devuelve la banda en subscores.severity (solo descriptiva)."
+  },
+  "backend": {
+    "instrument": "GAD7",
+    "format": "POST /api/v1/questionnaires/responses -> answers: [{item: <backend_item>, value: <entero>}]",
+    "booleans": "SÍ = 1, NO = 0"
+  }
+}

@@ -1,4 +1,7 @@
 """Endpoints que usa la app móvil (autenticados con token de dispositivo)."""
+import json
+from functools import lru_cache
+from pathlib import Path
 from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -136,3 +139,32 @@ async def mark_delivered(
         prompt.delivered_at = datetime.now(UTC)
         await session.commit()
     return prompt
+
+
+# ------------------------------------------------------------------ contenido de cuestionarios
+_QDIR = Path(__file__).resolve().parents[2] / "questionnaires"
+
+
+@lru_cache
+def _questionnaires() -> dict[str, dict]:
+    out = {}
+    for f in sorted(_QDIR.glob("*.json")):
+        data = json.loads(f.read_text(encoding="utf-8"))
+        out[data["backend"]["instrument"]] = data
+    return out
+
+
+@router.get("/catalog/questionnaires")
+async def list_questionnaires() -> list[dict]:
+    """Cuestionarios disponibles para el chatbot (código del backend, nombre, versión)."""
+    return [{"instrument": k, "id": v["id"], "name": v["name"], "version": v["version"]}
+            for k, v in _questionnaires().items()]
+
+
+@router.get("/catalog/questionnaires/{instrument}")
+async def get_questionnaire(instrument: str) -> dict:
+    """Texto, opciones, saltos y mapeo a ítems del backend. Fuente única para la app."""
+    q = _questionnaires().get(instrument.upper().replace("-", ""))
+    if q is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Cuestionario no encontrado")
+    return q
